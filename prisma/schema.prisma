@@ -1,0 +1,386 @@
+// Prisma schema for Pothik (TourBD) Full-Stack Next.js platform
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int       @id @default(autoincrement())
+  name              String
+  email             String    @unique
+  phone             String?
+  role              String    @default("user") // admin, partner, user, guide
+  avatar            String?
+  emailVerifiedAt   DateTime? @map("email_verified_at")
+  password          String
+  rememberToken     String?   @map("remember_token")
+  
+  // Mobile & KYC
+  isVerifiedMobile  Boolean   @default(false) @map("is_verified_mobile")
+  kycStatus         String    @default("unverified") @map("kyc_status")
+  kycSubmittedAt    DateTime? @map("kyc_submitted_at")
+  kycReviewedAt     DateTime? @map("kyc_reviewed_at")
+  nidFrontImage     String?   @map("nid_front_image")
+  nidBackImage      String?   @map("nid_back_image")
+  userPhoto         String?   @map("user_photo")
+  
+  // Personal Details
+  fatherName        String?   @map("father_name")
+  motherName        String?   @map("mother_name")
+  dob               String?
+  gender            String?
+  nationality       String    @default("Bangladesh")
+  nidNumber         String?   @map("nid_number")
+  
+  // Partner info
+  businessType      String?   @map("business_type")
+  businessName      String?   @map("business_name")
+  tradeLicenseNumber String?  @map("trade_license_number")
+  isOwner           Boolean   @default(true) @map("is_owner")
+  declarationAgreed Boolean   @default(false) @map("declaration_agreed")
+  
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  hotels            Hotel[]
+  restaurants       Restaurant[]
+  bookings          Booking[]
+  reviews           Review[]
+  complaints        Complaint[]
+  verifications     VerificationSubmission[]
+  guide             Guide?
+
+  @@map("users")
+}
+
+model Division {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  slug        String?    @unique
+  imageUrl    String?    @map("image_url")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  districts   District[]
+  spots       Spot[]
+  restaurants Restaurant[]
+
+  @@map("divisions")
+}
+
+model District {
+  id          Int        @id @default(autoincrement())
+  divisionId  Int        @map("division_id")
+  name        String
+  slug        String?    @unique
+  imageUrl    String?    @map("image_url")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  division    Division   @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  upazilas    Upazila[]
+  spots       Spot[]
+  restaurants Restaurant[]
+
+  @@map("districts")
+}
+
+model Upazila {
+  id          Int        @id @default(autoincrement())
+  districtId  Int        @map("district_id")
+  name        String
+  slug        String?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  district    District   @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  spots       Spot[]
+  restaurants Restaurant[]
+
+  @@map("upazilas")
+}
+
+model Spot {
+  id               Int          @id @default(autoincrement())
+  divisionId       Int?         @map("division_id")
+  districtId       Int          @map("district_id")
+  upazilaId        Int?         @map("upazila_id")
+  name             String
+  slug             String       @unique
+  description      String?
+  thumbnail        String?
+  images           String?      // JSON array string
+  locationLat      Float?       @map("location_lat")
+  locationLng      Float?       @map("location_lng")
+  bestTimeToVisit  String?      @map("best_time_to_visit")
+  bestTimeDetails  String?      @map("best_time_details")
+  googleMapLink    String?      @map("google_map_link")
+  nearbyLandmark   String?      @map("nearby_landmark")
+  
+  isFeatured       Boolean      @default(false) @map("is_featured")
+  entryFeeLocal    Float        @default(0.0) @map("entry_fee_local")
+  entryFeeForeign  Float        @default(0.0) @map("entry_fee_foreign")
+  difficultyLevel  String?      @default("easy") @map("difficulty_level")
+  featureTags      String?      @map("feature_tags") // JSON
+  customTags       String?      @map("custom_tags") // JSON
+  activityTags     String?      @map("activity_tags") // JSON
+  facilities       String?      // JSON
+  safetyInfo       String?      @map("safety_info")
+  tripDuration     String?      @map("trip_duration")
+  itinerary        String?
+  travelTips       String?      @map("travel_tips")
+  
+  metaTitle        String?      @map("meta_title")
+  metaDescription  String?      @map("meta_description")
+  metaKeywords     String?      @map("meta_keywords")
+  
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  division         Division?    @relation(fields: [divisionId], references: [id], onDelete: SetNull)
+  district         District     @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  upazila          Upazila?     @relation(fields: [upazilaId], references: [id], onDelete: SetNull)
+  hotels           Hotel[]
+  restaurants      Restaurant[]
+  routes           SpotRoute[]
+  reviews          Review[]
+
+  @@map("spots")
+}
+
+model SpotRoute {
+  id            Int      @id @default(autoincrement())
+  spotId        Int      @map("spot_id")
+  transportMode String   @map("transport_mode") // bus, train, flight, car, boat
+  estimatedCost Float?   @map("estimated_cost")
+  duration      String?
+  routeDetails  String?  @map("route_details")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  spot          Spot     @relation(fields: [spotId], references: [id], onDelete: Cascade)
+
+  @@map("spot_routes")
+}
+
+model Hotel {
+  id            Int       @id @default(autoincrement())
+  spotId        Int       @map("spot_id")
+  userId        Int?      @map("user_id")
+  name          String
+  slug          String    @unique
+  address       String?
+  contactNumber String?   @map("contact_number")
+  amenities     String?   // JSON
+  rating        Float     @default(0.0)
+  totalReviews  Int       @default(0) @map("total_reviews")
+  featuredImage String?   @map("featured_image")
+  galleryImages String?   @map("gallery_images") // JSON
+  lat           Float?
+  lng           Float?
+  isVerified    Boolean   @default(false) @map("is_verified")
+  status        String    @default("active")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  spot          Spot      @relation(fields: [spotId], references: [id], onDelete: Cascade)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rooms         Room[]
+  reviews       Review[]
+  complaints    Complaint[]
+
+  @@map("hotels")
+}
+
+model Room {
+  id            Int       @id @default(autoincrement())
+  hotelId       Int       @map("hotel_id")
+  title         String
+  slug          String?
+  description   String?
+  price         Float
+  discountPrice Float?    @map("discount_price")
+  maxGuests     Int       @default(2) @map("max_guests")
+  bedType       String    @default("King Bed") @map("bed_type")
+  roomSize      String?   @map("room_size")
+  amenities     String?   // JSON
+  images        String?   // JSON
+  isAvailable   Boolean   @default(true) @map("is_available")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  hotel         Hotel     @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+
+  @@map("rooms")
+}
+
+model Restaurant {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  spotId          Int?      @map("spot_id")
+  divisionId      Int       @map("division_id")
+  districtId      Int       @map("district_id")
+  upazilaId       Int?      @map("upazila_id")
+  name            String
+  slug            String    @unique
+  shortDescription String?  @map("short_description")
+  fullDescription  String?  @map("full_description")
+  category        String?
+  cuisineTypes    String?   @map("cuisine_types") // JSON
+  address         String?
+  googleMapLink   String?   @map("google_map_link")
+  lat             Float?
+  lng             Float?
+  priceRange      String?   @default("$$") @map("price_range")
+  openingTime     String?   @map("opening_time")
+  closingTime     String?   @map("closing_time")
+  is24Hours       Boolean   @default(false) @map("is_24_hours")
+  mobile          String?
+  featuredImage   String?   @map("featured_image")
+  galleryImages   String?   @map("gallery_images") // JSON
+  signatureDishes String?   @map("signature_dishes") // JSON
+  avgRating       Float     @default(0.0) @map("avg_rating")
+  totalReviews    Int       @default(0) @map("total_reviews")
+  status          String    @default("approved")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  spot            Spot?     @relation(fields: [spotId], references: [id], onDelete: SetNull)
+  division        Division  @relation(fields: [divisionId], references: [id], onDelete: Cascade)
+  district        District  @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  upazila         Upazila?  @relation(fields: [upazilaId], references: [id], onDelete: SetNull)
+
+  @@map("restaurants")
+}
+
+model Guide {
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @unique @map("user_id")
+  shortBio              String?   @map("short_bio")
+  languages             String?   // JSON array
+  yearsOfExperience     Int       @default(0) @map("years_of_experience")
+  specialization        String?
+  whatsappNumber        String?   @map("whatsapp_number")
+  status                String    @default("approved") // draft, pending, approved, rejected
+  kycVerified           Boolean   @default(false) @map("kyc_verified")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pricing               GuidePricing?
+  availabilities        GuideAvailability[]
+  bookings              Booking[]
+  reviews               Review[]
+  complaints            Complaint[]
+
+  @@map("guides")
+}
+
+model GuidePricing {
+  id            Int      @id @default(autoincrement())
+  guideId       Int      @unique @map("guide_id")
+  dailyRate     Float?   @map("daily_rate")
+  halfDayRate   Float?   @map("half_day_rate")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  guide         Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@map("guide_pricing")
+}
+
+model GuideAvailability {
+  id            Int      @id @default(autoincrement())
+  guideId       Int      @map("guide_id")
+  availableDate DateTime @map("available_date")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  guide         Guide    @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@map("guide_availabilities")
+}
+
+model Booking {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  roomId          Int       @map("room_id")
+  guideId         Int?      @map("guide_id")
+  checkIn         DateTime  @map("check_in")
+  checkOut        DateTime  @map("check_out")
+  totalPrice      Float     @map("total_price")
+  status          String    @default("pending") // pending, confirmed, cancelled, completed
+  paymentMethod   String?   @default("bkash") @map("payment_method")
+  paymentStatus   String    @default("unpaid") @map("payment_status")
+  transactionId   String?   @map("transaction_id")
+  specialRequests String?   @map("special_requests")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room            Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  guide           Guide?    @relation(fields: [guideId], references: [id], onDelete: SetNull)
+  reviews         Review[]
+
+  @@map("bookings")
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  bookingId   Int?     @map("booking_id")
+  spotId      Int?     @map("spot_id")
+  hotelId     Int?     @map("hotel_id")
+  guideId     Int?     @map("guide_id")
+  rating      Float
+  comment     String?
+  isVerified  Boolean  @default(false) @map("is_verified")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  booking     Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  spot        Spot?    @relation(fields: [spotId], references: [id], onDelete: Cascade)
+  hotel       Hotel?   @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  guide       Guide?   @relation(fields: [guideId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  guideId     Int?     @map("guide_id")
+  hotelId     Int?     @map("hotel_id")
+  description String
+  status      String   @default("pending") // pending, investigating, resolved, dismissed
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  guide       Guide?   @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  hotel       Hotel?   @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+
+  @@map("complaints")
+}
+
+model VerificationSubmission {
+  id           Int      @id @default(autoincrement())
+  userId       Int      @map("user_id")
+  businessType String?  @map("business_type")
+  status       String   @default("pending")
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_submissions")
+}
