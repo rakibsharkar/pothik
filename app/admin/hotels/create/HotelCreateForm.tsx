@@ -97,29 +97,16 @@ export const HotelCreateForm: React.FC<HotelCreateFormProps> = ({
   ]);
 
   // Media
-  const [featuredImage, setFeaturedImage] = useState(
-    'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop'
-  );
-  const [galleryImages, setGalleryImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80',
-    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80',
-  ]);
+  const [featuredImage, setFeaturedImage] = useState('');
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [lat, setLat] = useState('23.3847');
   const [lng, setLng] = useState('92.2986');
 
   // Business Verification (Provider Documents)
-  const [tradeLicenseImage, setTradeLicenseImage] = useState(
-    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80'
-  );
-  const [signboardImage, setSignboardImage] = useState(
-    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80'
-  );
-  const [receptionImage, setReceptionImage] = useState(
-    'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80'
-  );
-  const [utilityBillImage, setUtilityBillImage] = useState(
-    'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80'
-  );
+  const [tradeLicenseImage, setTradeLicenseImage] = useState('');
+  const [signboardImage, setSignboardImage] = useState('');
+  const [receptionImage, setReceptionImage] = useState('');
+  const [utilityBillImage, setUtilityBillImage] = useState('');
 
   // UI state
   const [isLoading, setIsLoading] = useState(false);

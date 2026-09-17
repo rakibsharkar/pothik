@@ -120,13 +120,8 @@ export const RestaurantCreateForm: React.FC<RestaurantCreateFormProps> = ({
   ]);
 
   // Media & Map
-  const [featuredImage, setFeaturedImage] = useState(
-    'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop'
-  );
-  const [galleryImages, setGalleryImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop',
-  ]);
+  const [featuredImage, setFeaturedImage] = useState('');
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [googleMapLink, setGoogleMapLink] = useState('');
   const [lat, setLat] = useState('23.3847');
   const [lng, setLng] = useState('92.2986');
@@ -135,14 +130,9 @@ export const RestaurantCreateForm: React.FC<RestaurantCreateFormProps> = ({
   // Signature Dishes Repeater
   const [signatureDishes, setSignatureDishes] = useState<Array<{ name: string; price: string; photo: string }>>([
     {
-      name: 'সাজেক স্পেশাল ব্যাম্বো চিকেন (Bamboo Chicken)',
-      price: '৪৫০',
-      photo: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=600&q=80',
-    },
-    {
-      name: 'পাহাড়ি খাঁটি হাঁসের কালা ভুনা',
-      price: '৩৮০',
-      photo: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80',
+      name: '',
+      price: '',
+      photo: '',
     },
   ]);
 

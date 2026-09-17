@@ -36,9 +36,7 @@ export const GuideCreateForm: React.FC<GuideCreateFormProps> = ({ districts }) =
 
   // Step 1: Basic Profile Information
   const [name, setName] = useState('');
-  const [userPhoto, setUserPhoto] = useState(
-    'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop'
-  );
+  const [userPhoto, setUserPhoto] = useState('');
   const [dob, setDob] = useState('1995-05-12');
   const [gender, setGender] = useState('male');
   const [nationality, setNationality] = useState('Bangladeshi');
@@ -80,12 +78,8 @@ export const GuideCreateForm: React.FC<GuideCreateFormProps> = ({ districts }) =
 
   // Step 4: Identity Verification & References
   const [nidNumber, setNidNumber] = useState('19951234567890123');
-  const [nidFrontImage, setNidFrontImage] = useState(
-    'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80'
-  );
-  const [nidBackImage, setNidBackImage] = useState(
-    'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&q=80'
-  );
+  const [nidFrontImage, setNidFrontImage] = useState('');
+  const [nidBackImage, setNidBackImage] = useState('');
   const [permanentAddress, setPermanentAddress] = useState('গ্রাম: রুইলুই, থানা: বাঘাইছড়ি, জেলা: রাঙামাটি');
   const [currentAddress, setCurrentAddress] = useState('কলেজ রোড, খাগড়াছড়ি সদর, খাগড়াছড়ি');
   const [referenceName, setReferenceName] = useState('কাজী আনোয়ার হোসেন (সাবেক চেয়ারম্যান)');

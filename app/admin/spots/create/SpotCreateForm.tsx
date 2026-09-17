@@ -57,10 +57,7 @@ export const SpotCreateForm: React.FC<SpotCreateFormProps> = ({ divisions, distr
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
   const [thumbnail, setThumbnail] = useState('');
-  const [galleryImages, setGalleryImages] = useState<string[]>([
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
-    'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
-  ]);
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
   const [isFeatured, setIsFeatured] = useState(false);
 
   // Tab 2: Location
@@ -364,9 +361,7 @@ export const SpotCreateForm: React.FC<SpotCreateFormProps> = ({ divisions, distr
           divisionId: divisionId ? Number(divisionId) : undefined,
           upazilaId: upazilaId ? Number(upazilaId) : undefined,
           description,
-          thumbnail:
-            thumbnail ||
-            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
+          thumbnail: thumbnail || null,
           images: validGalleryImages,
           locationLat: locationLat ? parseFloat(locationLat) : null,
           locationLng: locationLng ? parseFloat(locationLng) : null,
